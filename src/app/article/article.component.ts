@@ -12,8 +12,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class ArticleComponent implements OnInit {
   articles: ArticleDto[] = [];
   isModalOpen = false;
+  isAdd = false;
   selectedArticle = {} as ArticleDto;
   form: FormGroup;
+  
 
   constructor(
     private contentService: ContentService,
@@ -44,21 +46,21 @@ export class ArticleComponent implements OnInit {
     });
   }
   create() {
-    // this.selectedArticle = {} as ArticleDto;
-
-    this.buildForm(true);
+    this.isAdd = true;
+    this.buildForm();
     this.isModalOpen = true;
   }
-  edit(id: string) {
-    this.buildForm(false);
+  edit() {
+    this.isAdd = false;
+    this.buildForm();
     this.isModalOpen = true;
   }
 
-  buildForm(isAdd:boolean) {
+  buildForm() {
     this.form = this.fb.group({
-      heading: [isAdd == true ? '' : (this.selectedArticle.heading || ''), [Validators.required, Validators.maxLength(200)]],
-      byline: [isAdd == true ? '' : (this.selectedArticle.byline || ''), [Validators.required, Validators.maxLength(50)]],
-      body: [isAdd == true ? '' : (this.selectedArticle.body || ''), Validators.maxLength(4000)],
+      heading: [this.isAdd == true ? '' : (this.selectedArticle.heading || ''), [Validators.required, Validators.maxLength(200)]],
+      byline: [this.isAdd == true ? '' : (this.selectedArticle.byline || ''), [Validators.required, Validators.maxLength(50)]],
+      body: [this.isAdd == true ? '' : (this.selectedArticle.body || ''), Validators.maxLength(4000)],
     });
   }
 
@@ -67,7 +69,8 @@ export class ArticleComponent implements OnInit {
       return;
     }
 
-    const request = this.contentService.insertOrUpdateCmsContentByIdAndInput(this.selectedArticle.id, this.form.value);
+    var id = this.isAdd ? null : this.selectedArticle.id;
+    const request = this.contentService.insertOrUpdateCmsContentByIdAndInput(id, this.form.value);
 
     request.subscribe((article) => {
       this.form.reset();

@@ -7,14 +7,17 @@
                 <i class="fa fa-plus mr-1"></i>
                 <span>{{ "::New" | abpLocalization }}</span>
             </button>
-            <button id="update" class="btn btn-outline-primary btn-sm" type="button" (click)="edit(selectedArticle.id)">
+            <button id="update" class="btn btn-outline-primary btn-sm" type="button" (click)="edit()">
                 <span>{{ "::Update" | abpLocalization }}</span>
             </button>
         </div>
 
         <div *ngIf="selectedArticle.id != null">
             <div class="pt-2 fs-3 fw-bold">{{selectedArticle.heading}}</div>
-            <div class="pt-2 fw-bolder fst-italic">Author: {{selectedArticle.byline}}</div>
+            <div class="pt-2 fw-bolder fst-italic text-end">
+              <span class="text-decoration-underline">Author: {{selectedArticle.byline}}</span>
+              <div>{{selectedArticle.creationTime | date: 'MMM yyyy'}}</div>
+            </div>
             <p class="pt-4" [innerHTML]="selectedArticle.body"></p>
         </div>
       </div>
@@ -33,7 +36,7 @@
 
 <abp-modal [(visible)]="isModalOpen">
     <ng-template #abpHeader>
-        <h3>{{ (selectedArticle.id ? '::Edit' : '::New' ) | abpLocalization }}</h3>
+        <h3>{{ (isAdd ? '::New' : '::Edit' ) | abpLocalization }}</h3>
     </ng-template>
   
     <ng-template #abpBody>
